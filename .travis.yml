@@ -29,7 +29,7 @@ deploy:
   region: "us-west-2"
   app: "t-multi-docker"
   env: "Tmultidocker-env"
-  bucket_name: "elasticbeanstalk-us-west-2-230515820833Info"
+  bucket_name: "elasticbeanstalk-us-west-2-230515820833"
   bucket_path: "t-multi-docker"
   on:
     branch: master
