@@ -4,27 +4,34 @@ services:
 
 # Build the test container
 before_install:
- - docker build -t sidxz/t-multi-docker-client-test -f ./client/Dockerfile.dev ./client
+  - docker build -t sidxz/t-multi-docker-client-test -f ./client/Dockerfile.dev ./client
 
 # Test scripts
 script:
- - docker run -e CI=true sidxz/t-multi-docker-client-test npm test
+  - docker run -e CI=true sidxz/t-multi-docker-client-test npm test
 
 # Build containers for production
 after_success:
- - docker build -t sidxz/t-multi-docker-worker ./worker
- - docker build -t sidxz/t-multi-docker-server ./server
- - docker build -t sidxz/t-multi-docker-client ./client
- - docker build -t sidxz/t-multi-docker-nginx ./nginx
- # Login to docker hub
- - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
- # Take those images and push them unto docker hub
- - docker push sidxz/t-multi-docker-worker
- - docker push sidxz/t-multi-docker-server
- - docker push sidxz/t-multi-docker-client
- - docker push sidxz/t-multi-docker-nginx
+  - docker build -t sidxz/t-multi-docker-worker ./worker
+  - docker build -t sidxz/t-multi-docker-server ./server
+  - docker build -t sidxz/t-multi-docker-client ./client
+  - docker build -t sidxz/t-multi-docker-nginx ./nginx
+  # Login to docker hub
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  # Take those images and push them unto docker hub
+  - docker push sidxz/t-multi-docker-worker
+  - docker push sidxz/t-multi-docker-server
+  - docker push sidxz/t-multi-docker-client
+  - docker push sidxz/t-multi-docker-nginx
 
-
- 
-
- 
+deploy:
+  provider: elasticbeanstalk
+  region: "us-west-2"
+  app: "t-multi-docker"
+  env: "Tmultidocker-env"
+  bucket_name: "elasticbeanstalk-us-west-2-230515820833Info"
+  bucket_path: "t-multi-docker"
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
